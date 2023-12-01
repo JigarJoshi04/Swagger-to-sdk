@@ -1,0 +1,45 @@
+name: Swagger Codegen
+
+on:
+  push:
+    branches:
+      - main  # Adjust the branch name as needed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+
+    - name: Install Swagger Codegen
+      run: |
+        wget https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.27/swagger-codegen-cli-3.0.27.jar -O swagger-codegen-cli.jar
+        chmod +x swagger-codegen-cli.jar
+
+    - name: Generate SDKs
+      run: |
+        languages=("python" "java" "javascript" "typescript" "ruby" "php" "csharp" "swift" "go" "kotlin" "scala" "typescript-node" "typescript-fetch" "typescript-angular" "objc" "dart" "rust" "powershell")
+        
+        for lang in "${languages[@]}"
+        do
+          echo "Generating $lang SDK..."
+          java -jar swagger-codegen-cli.jar generate -i input/accounts.openapi.yaml -l $lang -o output/$lang
+        done
+
+    - name: Commit and Push Changes
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add .
+        git commit -m "Generate SDKs"
+        git push
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
