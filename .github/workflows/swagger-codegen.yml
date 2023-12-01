@@ -36,6 +36,7 @@ jobs:
 
     - name: Commit and Push Changes
       run: |
+        echo {{ secrets.MY_GITHUB_TOKEN }}
         git config --local user.email "jigar.pj@somaiya.edu"
         git config --local user.name "Jigar Joshi"
         git add .
