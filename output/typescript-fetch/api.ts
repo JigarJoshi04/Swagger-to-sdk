@@ -1296,47 +1296,6 @@ export const CustomerInfoApiFetchParamCreator = function (configuration?: Config
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * Get the roles available for specified customer ID
-         * @summary List Roles for Customer
-         * @param {string} customerId Customer ID
-         * @param {string} [pageCursor] Cursor to fetch next paginated items
-         * @param {number} [pageSize] Max number of items to return in a page
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRoles(customerId: string, pageCursor?: string, pageSize?: number, options: any = {}): FetchArgs {
-            // verify required parameter 'customerId' is not null or undefined
-            if (customerId === null || customerId === undefined) {
-                throw new RequiredError('customerId','Required parameter customerId was null or undefined when calling getRoles.');
-            }
-            const localVarPath = `/customers/{customerId}/roles`
-                .replace(`{${"customerId"}}`, encodeURIComponent(String(customerId)));
-            const localVarUrlObj = url.parse(localVarPath, true);
-            const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication service_auth required
-
-            if (pageCursor !== undefined) {
-                localVarQueryParameter['page[cursor]'] = pageCursor;
-            }
-
-            if (pageSize !== undefined) {
-                localVarQueryParameter['page[size]'] = pageSize;
-            }
-
-            localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
-            localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
-
-            return {
-                url: url.format(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -1356,27 +1315,6 @@ export const CustomerInfoApiFp = function(configuration?: Configuration) {
          */
         getPartitions(customerId: string, include?: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<InlineResponse200> {
             const localVarFetchArgs = CustomerInfoApiFetchParamCreator(configuration).getPartitions(customerId, include, options);
-            return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
-                return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
-                    if (response.status >= 200 && response.status < 300) {
-                        return response.json();
-                    } else {
-                        throw response;
-                    }
-                });
-            };
-        },
-        /**
-         * Get the roles available for specified customer ID
-         * @summary List Roles for Customer
-         * @param {string} customerId Customer ID
-         * @param {string} [pageCursor] Cursor to fetch next paginated items
-         * @param {number} [pageSize] Max number of items to return in a page
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRoles(customerId: string, pageCursor?: string, pageSize?: number, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<RoleList> {
-            const localVarFetchArgs = CustomerInfoApiFetchParamCreator(configuration).getRoles(customerId, pageCursor, pageSize, options);
             return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
                 return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                     if (response.status >= 200 && response.status < 300) {
@@ -1407,18 +1345,6 @@ export const CustomerInfoApiFactory = function (configuration?: Configuration, f
         getPartitions(customerId: string, include?: string, options?: any) {
             return CustomerInfoApiFp(configuration).getPartitions(customerId, include, options)(fetch, basePath);
         },
-        /**
-         * Get the roles available for specified customer ID
-         * @summary List Roles for Customer
-         * @param {string} customerId Customer ID
-         * @param {string} [pageCursor] Cursor to fetch next paginated items
-         * @param {number} [pageSize] Max number of items to return in a page
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRoles(customerId: string, pageCursor?: string, pageSize?: number, options?: any) {
-            return CustomerInfoApiFp(configuration).getRoles(customerId, pageCursor, pageSize, options)(fetch, basePath);
-        },
     };
 };
 
@@ -1440,20 +1366,6 @@ export class CustomerInfoApi extends BaseAPI {
      */
     public getPartitions(customerId: string, include?: string, options?: any) {
         return CustomerInfoApiFp(this.configuration).getPartitions(customerId, include, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * Get the roles available for specified customer ID
-     * @summary List Roles for Customer
-     * @param {string} customerId Customer ID
-     * @param {string} [pageCursor] Cursor to fetch next paginated items
-     * @param {number} [pageSize] Max number of items to return in a page
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomerInfoApi
-     */
-    public getRoles(customerId: string, pageCursor?: string, pageSize?: number, options?: any) {
-        return CustomerInfoApiFp(this.configuration).getRoles(customerId, pageCursor, pageSize, options)(this.fetch, this.basePath);
     }
 
 }

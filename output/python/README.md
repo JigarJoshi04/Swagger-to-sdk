@@ -63,20 +63,6 @@ try:
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling CustomerInfoApi->get_partitions: %s\n" % e)
-
-
-# create an instance of the API class
-api_instance = swagger_client.CustomerInfoApi(swagger_client.ApiClient(configuration))
-customer_id = 'customer_id_example' # str | Customer ID
-page_cursor = 'page_cursor_example' # str | Cursor to fetch next paginated items (optional)
-page_size = 20 # int | Max number of items to return in a page (optional) (default to 20)
-
-try:
-    # List Roles for Customer
-    api_response = api_instance.get_roles(customer_id, page_cursor=page_cursor, page_size=page_size)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling CustomerInfoApi->get_roles: %s\n" % e)
 ```
 
 ## Documentation for API Endpoints
@@ -86,7 +72,6 @@ All URIs are relative to *https://api.bpcloud.siemens.com/accounts*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *CustomerInfoApi* | [**get_partitions**](docs/CustomerInfoApi.md#get_partitions) | **GET** /customers/{customerId}/partitions | List Partitions for Customer
-*CustomerInfoApi* | [**get_roles**](docs/CustomerInfoApi.md#get_roles) | **GET** /customers/{customerId}/roles | List Roles for Customer
 *MeApi* | [**get_me_usergroups**](docs/MeApi.md#get_me_usergroups) | **GET** /me/usergroups | Get the usergroups of caller
 
 ## Documentation For Models

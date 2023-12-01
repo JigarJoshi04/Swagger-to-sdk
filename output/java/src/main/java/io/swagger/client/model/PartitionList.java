@@ -30,7 +30,7 @@ import java.util.List;
  * PartitionList
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-01T06:22:45.936666Z[Etc/UTC]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-01T06:25:18.059872Z[Etc/UTC]")
 public class PartitionList {
   @SerializedName("links")
   private PartitionListLinks links = null;

@@ -97,7 +97,6 @@ All URIs are relative to *https://api.bpcloud.siemens.com/accounts*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *CustomerInfoApi* | [**GetPartitions**](docs/CustomerInfoApi.md#getpartitions) | **GET** /customers/{customerId}/partitions | List Partitions for Customer
-*CustomerInfoApi* | [**GetRoles**](docs/CustomerInfoApi.md#getroles) | **GET** /customers/{customerId}/roles | List Roles for Customer
 *MeApi* | [**GetMeUsergroups**](docs/MeApi.md#getmeusergroups) | **GET** /me/usergroups | Get the usergroups of caller
 
 <a name="documentation-for-models"></a>

@@ -22,7 +22,6 @@ All URIs are relative to *https://api.bpcloud.siemens.com/accounts*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *CustomerInfoApi* | [**GetPartitions**](docs/CustomerInfoApi.md#getpartitions) | **Get** /customers/{customerId}/partitions | List Partitions for Customer
-*CustomerInfoApi* | [**GetRoles**](docs/CustomerInfoApi.md#getroles) | **Get** /customers/{customerId}/roles | List Roles for Customer
 *MeApi* | [**GetMeUsergroups**](docs/MeApi.md#getmeusergroups) | **Get** /me/usergroups | Get the usergroups of caller
 
 ## Documentation For Models

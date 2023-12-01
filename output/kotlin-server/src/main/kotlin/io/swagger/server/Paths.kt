@@ -40,15 +40,6 @@ object Paths {
     @Location("/customers/{customerId}/partitions") class getPartitions(val customerId: kotlin.String, val include: kotlin.String)
 
     /**
-     * List Roles for Customer
-     * Get the roles available for specified customer ID
-     * @param customerId Customer ID 
-     * @param page[cursor] Cursor to fetch next paginated items (optional)
-     * @param page[size] Max number of items to return in a page (optional, default to 20)
-     */
-    @Location("/customers/{customerId}/roles") class getRoles(val customerId: kotlin.String, val page[cursor]: kotlin.String, val page[size]: kotlin.Int)
-
-    /**
      * Get the usergroups of caller
      * Return list of the usergroup (user identity inferred from the SUB in the token)
 
