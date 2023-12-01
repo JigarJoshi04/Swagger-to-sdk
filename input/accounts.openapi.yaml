@@ -1,0 +1,836 @@
+openapi: 3.0.2
+info:
+  description: |
+    Accounts API
+  version: 0.9.5
+  title: Accounts API
+  contact:
+    name: Siemens Regional Contact
+  x-logo:
+    url: logo.png
+    altText: Siemens logo
+servers:
+  - url: https://api.bpcloud.siemens.com/accounts
+    description: Production Endpoint
+components:
+  securitySchemes:
+    service_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    pathPageCursor:
+      name: page[cursor]
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      schema:
+        type: string
+    pathPageAfter:
+      name: page[after]
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      schema:
+        type: string
+    pathCustomerId:
+      name: customerId
+      in: path
+      description: Customer ID
+      required: true
+      schema:
+        type: string
+    pathUserGroupId:
+      name: usrGrpId
+      in: path
+      description: Usergroup ID
+      required: true
+      schema:
+        type: string
+    pathUserId:
+      name: usrId
+      in: path
+      description: User ID
+      required: true
+      schema:
+        type: string
+    pathRolesId:
+      name: rId
+      in: path
+      description: Roles ID
+      required: true
+      schema:
+        type: string
+    queryPageAfter:
+      name: page[after]
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      schema:
+        type: string
+    queryPageBefore:
+      name: page[before]
+      in: query
+      description: Cursor to fetch previous paginated items
+      required: false
+      schema:
+        type: string
+    queryPageSize:
+      name: page[size]
+      in: query
+      description: Max number of items to return in a page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    queryPageNext:
+      name: page[next]
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      schema:
+        type: string
+  schemas:
+    MetaCompany:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Mean Growth Company
+    Customer:
+      type: object
+      required:
+        - type
+        - id
+        - attributes
+      properties:
+        type:
+          type: string
+          enum:
+            - Customer
+        id:
+          type: string
+          example: f68a9762-9679-4c17-9012-ec9271f4087f
+        attributes:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+              example: test-customer-name
+            customerMembershipState:
+              $ref: '#/components/schemas/UserMembershipAttributes'
+        meta:
+          type: object
+          required:
+            - createdAt
+          properties:
+            updatedAt:
+              type: string
+              format: date-time
+            updatedBy:
+              type: string
+              example: cde
+    UserMembershipAttributes:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+          enum:
+            - active
+            - suspended
+          example: active
+          description: State of the membership
+      description: additional details user by certain products
+    RoleRelationship:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - type
+              - id
+            properties:
+              type:
+                type: string
+                enum:
+                  - Role
+              id:
+                type: string
+                example: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+    CustomerRelationship:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - type
+            - id
+          properties:
+            type:
+              type: string
+              enum:
+                - Customer
+            id:
+              type: string
+              example: fee69bee-d108-4c30-9595-47d40b1e24ed
+    PartitionRelationship:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - type
+              - id
+            properties:
+              type:
+                type: string
+                enum:
+                  - Partition
+                example: Partition
+              id:
+                type: string
+                example: e0e662a9-c7a9-495a-a345-e06436d41941
+    UserGroup:
+      type: object
+      required:
+        - type
+        - id
+        - attributes
+      properties:
+        type:
+          type: string
+          example: UserGroup
+        id:
+          type: string
+          example: f68a9762-9679-4c17-9012-ec9271f4087f
+        attributes:
+          type: object
+          required:
+            - name
+            - description
+          properties:
+            name:
+              description: 'Name of the user group '
+              type: string
+              example: CustomerOperator
+            description:
+              description: 'Description of the user group '
+              type: string
+              example: Customer Operator for managing user groups
+            isMachineEnabled:
+              type: boolean
+              example: true
+            isSystemDefined:
+              type: boolean
+              example: true
+        relationships:
+          type: object
+          properties:
+            hasAccessTo:
+              $ref: '#/components/schemas/PartitionRelationship'
+            authorizedAs:
+              $ref: '#/components/schemas/RoleRelationship'
+            ownedBy:
+              $ref: '#/components/schemas/CustomerRelationship'
+    UserGroupList:
+      type: object
+      required:
+        - links
+        - data
+      properties:
+        links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              type: string
+              example: /me/usergroups
+            next:
+              type: string
+              example: /me/usergroups?page[cursor]=qwerty
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserGroup'
+    UserGroupRelationship:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - type
+              - id
+            properties:
+              type:
+                type: string
+                example: UserGroup
+              id:
+                type: string
+    UserResponseAttributes:
+      type: object
+      required:
+        - identity
+        - profile
+      properties:
+        identity:
+          type: object
+          required:
+            - emailId
+            - externalId
+            - givenName
+          properties:
+            emailId:
+              type: string
+              description: email address of the user
+              example: john.doe@siemens.com
+            externalId:
+              type: string
+              description: horizon ID of the user within Siemens ID
+              example: oauth2|main-tenant-oidc|samlp|Siemens|Z0000ABCD
+            familyName:
+              type: string
+              description: user's family name
+              example: Doe
+            fullName:
+              type: string
+              description: user's full name
+              example: John Doe
+            givenName:
+              type: string
+              description: user's given name
+              example: John
+          description: user identity details
+        profile:
+          type: object
+          properties:
+            freeText:
+              type: string
+              description: free text user info
+            jobDescription:
+              type: string
+              description: user's job description
+              example: Engineer
+            phone:
+              type: string
+              description: user's contact phone number
+              example: 222-333-5674
+            profileImage:
+              type: string
+              description: user's profile image
+    User:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          description: type of the resource
+          example: User
+        id:
+          type: string
+          description: 'ID of the user '
+          example: 8e9833b5-b844-40a3-8572-4a16d29c53bc
+        attributes:
+          $ref: '#/components/schemas/UserResponseAttributes'
+        relationships:
+          type: object
+          properties:
+            belongsTo:
+              $ref: '#/components/schemas/UserGroupRelationship'
+    PartitionList:
+      type: object
+      required:
+        - links
+        - data
+      properties:
+        links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              type: string
+              example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions
+            next:
+              type: string
+              example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions?page[cursor]=qwerty
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Partition'
+        included:
+          description: Included resources based in `include` query param
+          type: array
+          items:
+            type: object
+            required:
+              - type
+              - id
+              - attributes
+            properties:
+              type:
+                type: string
+                example: Customer
+              id:
+                type: string
+                description: ID
+                example: 209d38aa-02c1-48ab-bf37-2716f1ddfeb6
+              attributes:
+                type: object
+                required:
+                  - name
+                properties:
+                  name:
+                    type: string
+    Partition:
+      type: object
+      required:
+        - type
+        - id
+        - attributes
+      properties:
+        type:
+          type: string
+          example: Partition
+        id:
+          type: string
+          example: uuid
+        attributes:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+              example: sample partition
+        relationships:
+          type: object
+          required:
+            - ownedByCustomer
+          properties:
+            ownedByCustomer:
+              $ref: '#/components/schemas/CustomerRelationship'
+    RoleList:
+      type: object
+      required:
+        - links
+        - data
+      properties:
+        links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              type: string
+              example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles
+            next:
+              type: string
+              example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+    Role:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          example: Role
+        id:
+          type: string
+          example: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+        attributes:
+          type: object
+          required:
+            - technicalName
+            - displayName
+            - permissions
+          properties:
+            technicalName:
+              type: string
+              example: sbs.user
+            displayName:
+              type: string
+              example: User
+            permissions:
+              type: array
+              items:
+                type: string
+                example: app.accountMgr
+    MachineUser:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          enum:
+            - MachineUser
+        id:
+          type: string
+          description: 'ID of the Machine User '
+          example: 8e9833b5-b844-40a3-8572-4a16d29c53bc
+        attributes:
+          $ref: '#/components/schemas/MachineUserResponseAttributes'
+        relationships:
+          type: object
+          properties:
+            ownedBy:
+              $ref: '#/components/schemas/CustomerRelationship'
+        meta:
+          type: object
+          required:
+            - createdAt
+          properties:
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            createdBy:
+              type: string
+              example: abc
+            updatedBy:
+              type: string
+              example: cde
+    MachineUserResponseAttributes:
+      type: object
+      required:
+        - name
+        - purpose
+        - oAuth
+        - state
+      properties:
+        name:
+          type: string
+          description: Name of Machine User
+          example: Machine User 1
+        purpose:
+          type: string
+          description: Purpose of this machine user
+          example: running automated tests
+        state:
+          $ref: '#/components/schemas/MachineUserState'
+        oAuth:
+          $ref: '#/components/schemas/MachineUserOAuth'
+    MachineUserState:
+      type: object
+      required:
+        - current
+        - since
+        - actionBy
+      properties:
+        current:
+          type: string
+          description: Status of Machine User
+          example: Active
+        since:
+          type: string
+          description: Status since time
+          example: '2021-11-06T00:00:00Z'
+        actionBy:
+          type: string
+          description: was set to this status by(ID)
+          example: 8e9833b5-b844-40a3-8572-4a16d29c53bc
+    MachineUserOAuth:
+      type: object
+      required:
+        - clientId
+        - issuer
+        - audience
+        - secretCreated
+        - secretRotated
+      properties:
+        clientId:
+          type: string
+          description: ID of client
+          example: iNpNMgBVJ0Xh5dLqwkC70OueFs7kRAF2
+        issuer:
+          type: string
+          description: issuer of oAuth
+          example: https://siemens-bt-015.eu.auth0.com
+        audience:
+          type: string
+          description: Audience
+          example: https://horizon.siemens.com
+        secretCreated:
+          type: string
+          description: Time of secret creation
+          example: '2021-06-29T08:58:43.962307719Z'
+        secretRotated:
+          type: string
+          description: time of secret rotation
+          example: '2021-06-29T08:58:43.962307719Z'
+    CustomerList:
+      type: object
+      required:
+        - links
+        - data
+      properties:
+        links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              type: string
+              example: /me/customers
+            next:
+              type: string
+              example: /me/customers?page[cursor]=qwerty
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+    PagedUserGroupListResponse:
+      title: PagedUserGroupListResponse
+      type: object
+      required:
+        - links
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/UserGroupListResponseData'
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/usergroups
+            next:
+              type: string
+              example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/usergroups
+    UserGroupListResponseData:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserGroupResponseData'
+    UserGroupResponseData:
+      type: object
+      required:
+        - type
+        - id
+        - attributes
+      properties:
+        type:
+          type: string
+          example: UserGroup
+        id:
+          type: string
+          example: f68a9762-9679-4c17-9012-ec9271f4087f
+        attributes:
+          $ref: '#/components/schemas/UserGroupResponseAttribute'
+        relationships:
+          type: object
+          properties:
+            hasAccessTo:
+              $ref: '#/components/schemas/PartitionRelationship'
+            authorizedAs:
+              $ref: '#/components/schemas/RoleRelationship'
+            ownedBy:
+              $ref: '#/components/schemas/CustomerRelationship'
+    UserGroupResponseAttribute:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          description: 'Name of the user group '
+          type: string
+          example: CustomerOperator
+        description:
+          description: 'Description of the user group '
+          type: string
+          example: Customer Operator for managing user groups
+        isMachineEnabled:
+          type: boolean
+          example: true
+        isSystemDefined:
+          type: boolean
+          example: true
+    Error:
+      type: object
+      description: |
+        [More error information](docs/api-errors.html)
+      required:
+        - errors
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - status
+              - title
+            properties:
+              id:
+                type: string
+                example: e31f00cc-7a5d-46c2-a272-771e6a8d6ff0
+                pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+                description: A unique identifier for this particular occurrence of the problem.
+              code:
+                type: string
+                description: An application-specific error code, expressed as a string value.
+                example: 200-0201
+              status:
+                type: string
+                example: '403'
+                description: The HTTP status code applicable to this problem, expressed as a string value.
+              title:
+                type: string
+                description: >-
+                  A short, human-readable summary of the problem that SHOULD NOT change from occurrence to occurrence of
+                  the problem, except for purposes of localization.
+                example: Forbidden to perform this action
+              detail:
+                type: string
+                description: >-
+                  a human-readable explanation specific to this occurrence of the problem. Like title, this field’s
+                  value can be localized.
+                example: Forbidden to perform this action
+paths:
+  /me/usergroups:
+    get:
+      tags:
+        - Me
+      summary: Get the usergroups of caller
+      description: |
+        Return list of the usergroup (user identity inferred from the SUB in the token)
+      operationId: getMeUsergroups
+      x-horizon-permission: enforcement.unauthorized
+      parameters:
+        - $ref: '#/components/parameters/pathPageCursor'
+        - $ref: '#/components/parameters/queryPageSize'
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/UserGroupList'
+        4XX:
+          description: Client Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Server Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - service_auth: []
+  /customers/{customerId}/partitions:
+    get:
+      tags:
+        - CustomerInfo
+      x-horizon-permission: subscription.partitions.read
+      parameters:
+        - $ref: '#/components/parameters/pathCustomerId'
+        - name: include
+          in: query
+          description: include related resources
+          required: false
+          schema:
+            enum:
+              - ownedByCustomer.name
+      summary: List Partitions for Customer
+      description: Get the partitions for the specified customer
+      operationId: getPartitions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartitionList'
+        4XX:
+          description: Client Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Server Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - service_auth: []
+  /customers/{customerId}/roles:
+    get:
+      tags:
+        - CustomerInfo
+      summary: List Roles for Customer
+      description: Get the roles available for specified customer ID
+      operationId: getRoles
+      x-horizon-permission: user.role.read
+      parameters:
+        - $ref: '#/components/parameters/pathPageCursor'
+        - $ref: '#/components/parameters/queryPageSize'
+        - $ref: '#/components/parameters/pathCustomerId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/RoleList'
+        4XX:
+          description: Client Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Server Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - service_auth: []
+tags:
+  - name: Me
+    description: Self Information
+  - name: CustomerInfo
+    description: Customer Information
