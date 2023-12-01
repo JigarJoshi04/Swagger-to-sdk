@@ -26,7 +26,7 @@ jobs:
 
     - name: Generate SDKs
       run: |
-        languages=("python" "java" "javascript" "typescript" "ruby" "php" "csharp" "swift" "go" "kotlin" "scala" "typescript-node" "typescript-fetch" "typescript-angular" "objc" "dart" "rust" "powershell")
+        languages=("python" "java" "javascript" "typescript" "ruby" "php" "csharp" "swift" "go" "kotlin" "scala" "typescript-node" "typescript-fetch" "typescript-angular" "objc" "rust")
         
         for lang in "${languages[@]}"
         do
