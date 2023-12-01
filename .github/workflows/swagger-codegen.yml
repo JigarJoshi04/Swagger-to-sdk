@@ -36,8 +36,8 @@ jobs:
 
     - name: Commit and Push Changes
       run: |
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
+        git config --local user.email "jigar.pj@somaiya.edu"
+        git config --local user.name "Jigar Joshi"
         git add .
         git commit -m "Generate SDKs"
         git push
