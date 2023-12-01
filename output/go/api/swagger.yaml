@@ -1,0 +1,1216 @@
+openapi: 3.0.2
+info:
+  title: Accounts API
+  description: |
+    Accounts API
+  contact:
+    name: Siemens Regional Contact
+  version: 0.9.5
+  x-logo:
+    url: logo.png
+    altText: Siemens logo
+servers:
+- url: https://api.bpcloud.siemens.com/accounts
+  description: Production Endpoint
+tags:
+- name: Me
+  description: Self Information
+- name: CustomerInfo
+  description: Customer Information
+paths:
+  /me/usergroups:
+    get:
+      tags:
+      - Me
+      summary: Get the usergroups of caller
+      description: |
+        Return list of the usergroup (user identity inferred from the SUB in the token)
+      operationId: getMeUsergroups
+      parameters:
+      - name: "page[cursor]"
+        in: query
+        description: Cursor to fetch next paginated items
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: "page[size]"
+        in: query
+        description: Max number of items to return in a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 20
+      responses:
+        "200":
+          description: Operation successful
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/UserGroupList'
+        "4XX":
+          description: Client Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "5XX":
+          description: Server Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - service_auth: []
+      x-horizon-permission: enforcement.unauthorized
+  /customers/{customerId}/partitions:
+    get:
+      tags:
+      - CustomerInfo
+      summary: List Partitions for Customer
+      description: Get the partitions for the specified customer
+      operationId: getPartitions
+      parameters:
+      - name: customerId
+        in: path
+        description: Customer ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: include related resources
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - ownedByCustomer.name
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "4XX":
+          description: Client Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "5XX":
+          description: Server Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - service_auth: []
+      x-horizon-permission: subscription.partitions.read
+  /customers/{customerId}/roles:
+    get:
+      tags:
+      - CustomerInfo
+      summary: List Roles for Customer
+      description: Get the roles available for specified customer ID
+      operationId: getRoles
+      parameters:
+      - name: "page[cursor]"
+        in: query
+        description: Cursor to fetch next paginated items
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: "page[size]"
+        in: query
+        description: Max number of items to return in a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 20
+      - name: customerId
+        in: path
+        description: Customer ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/RoleList'
+        "4XX":
+          description: Client Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "5XX":
+          description: Server Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - service_auth: []
+      x-horizon-permission: user.role.read
+components:
+  schemas:
+    MetaCompany:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: Mean Growth Company
+    Customer:
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Customer
+        id:
+          type: string
+          example: f68a9762-9679-4c17-9012-ec9271f4087f
+        attributes:
+          $ref: '#/components/schemas/Customer_attributes'
+        meta:
+          $ref: '#/components/schemas/Customer_meta'
+    UserMembershipAttributes:
+      required:
+      - state
+      type: object
+      properties:
+        state:
+          type: string
+          description: State of the membership
+          example: active
+          enum:
+          - active
+          - suspended
+      description: additional details user by certain products
+    RoleRelationship:
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleRelationship_data'
+      example:
+        data:
+        - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+          type: Role
+        - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+          type: Role
+    CustomerRelationship:
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/CustomerRelationship_data'
+      example:
+        data:
+          id: fee69bee-d108-4c30-9595-47d40b1e24ed
+          type: Customer
+    PartitionRelationship:
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartitionRelationship_data'
+      example:
+        data:
+        - id: e0e662a9-c7a9-495a-a345-e06436d41941
+          type: Partition
+        - id: e0e662a9-c7a9-495a-a345-e06436d41941
+          type: Partition
+    UserGroup:
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: UserGroup
+        id:
+          type: string
+          example: f68a9762-9679-4c17-9012-ec9271f4087f
+        attributes:
+          $ref: '#/components/schemas/UserGroup_attributes'
+        relationships:
+          $ref: '#/components/schemas/UserGroup_relationships'
+      example:
+        relationships:
+          authorizedAs:
+            data:
+            - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+              type: Role
+            - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+              type: Role
+          hasAccessTo:
+            data:
+            - id: e0e662a9-c7a9-495a-a345-e06436d41941
+              type: Partition
+            - id: e0e662a9-c7a9-495a-a345-e06436d41941
+              type: Partition
+          ownedBy:
+            data:
+              id: fee69bee-d108-4c30-9595-47d40b1e24ed
+              type: Customer
+        attributes:
+          isMachineEnabled: true
+          isSystemDefined: true
+          name: CustomerOperator
+          description: Customer Operator for managing user groups
+        id: f68a9762-9679-4c17-9012-ec9271f4087f
+        type: UserGroup
+    UserGroupList:
+      required:
+      - data
+      - links
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/UserGroupList_links'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserGroup'
+      example:
+        data:
+        - relationships:
+            authorizedAs:
+              data:
+              - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+                type: Role
+              - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+                type: Role
+            hasAccessTo:
+              data:
+              - id: e0e662a9-c7a9-495a-a345-e06436d41941
+                type: Partition
+              - id: e0e662a9-c7a9-495a-a345-e06436d41941
+                type: Partition
+            ownedBy:
+              data:
+                id: fee69bee-d108-4c30-9595-47d40b1e24ed
+                type: Customer
+          attributes:
+            isMachineEnabled: true
+            isSystemDefined: true
+            name: CustomerOperator
+            description: Customer Operator for managing user groups
+          id: f68a9762-9679-4c17-9012-ec9271f4087f
+          type: UserGroup
+        - relationships:
+            authorizedAs:
+              data:
+              - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+                type: Role
+              - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+                type: Role
+            hasAccessTo:
+              data:
+              - id: e0e662a9-c7a9-495a-a345-e06436d41941
+                type: Partition
+              - id: e0e662a9-c7a9-495a-a345-e06436d41941
+                type: Partition
+            ownedBy:
+              data:
+                id: fee69bee-d108-4c30-9595-47d40b1e24ed
+                type: Customer
+          attributes:
+            isMachineEnabled: true
+            isSystemDefined: true
+            name: CustomerOperator
+            description: Customer Operator for managing user groups
+          id: f68a9762-9679-4c17-9012-ec9271f4087f
+          type: UserGroup
+        links:
+          next: "/me/usergroups?page[cursor]=qwerty"
+          self: /me/usergroups
+    UserGroupRelationship:
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserGroupRelationship_data'
+    UserResponseAttributes:
+      required:
+      - identity
+      - profile
+      type: object
+      properties:
+        identity:
+          $ref: '#/components/schemas/UserResponseAttributes_identity'
+        profile:
+          $ref: '#/components/schemas/UserResponseAttributes_profile'
+    User:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: type of the resource
+          example: User
+        id:
+          type: string
+          description: 'ID of the user '
+          example: 8e9833b5-b844-40a3-8572-4a16d29c53bc
+        attributes:
+          $ref: '#/components/schemas/UserResponseAttributes'
+        relationships:
+          $ref: '#/components/schemas/User_relationships'
+    PartitionList:
+      required:
+      - data
+      - links
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/PartitionList_links'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Partition'
+        included:
+          type: array
+          description: Included resources based in `include` query param
+          items:
+            $ref: '#/components/schemas/PartitionList_included'
+      example:
+        data:
+        - relationships:
+            ownedByCustomer:
+              data:
+                id: fee69bee-d108-4c30-9595-47d40b1e24ed
+                type: Customer
+          attributes:
+            name: name
+            description: sample partition
+          id: uuid
+          type: Partition
+        - relationships:
+            ownedByCustomer:
+              data:
+                id: fee69bee-d108-4c30-9595-47d40b1e24ed
+                type: Customer
+          attributes:
+            name: name
+            description: sample partition
+          id: uuid
+          type: Partition
+        links:
+          next: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions?page[cursor]=qwerty"
+          self: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions
+        included:
+        - attributes:
+            name: name
+          id: 209d38aa-02c1-48ab-bf37-2716f1ddfeb6
+          type: Customer
+        - attributes:
+            name: name
+          id: 209d38aa-02c1-48ab-bf37-2716f1ddfeb6
+          type: Customer
+    Partition:
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: Partition
+        id:
+          type: string
+          example: uuid
+        attributes:
+          $ref: '#/components/schemas/Partition_attributes'
+        relationships:
+          $ref: '#/components/schemas/Partition_relationships'
+      example:
+        relationships:
+          ownedByCustomer:
+            data:
+              id: fee69bee-d108-4c30-9595-47d40b1e24ed
+              type: Customer
+        attributes:
+          name: name
+          description: sample partition
+        id: uuid
+        type: Partition
+    RoleList:
+      required:
+      - data
+      - links
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/RoleList_links'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+      example:
+        data:
+        - attributes:
+            displayName: User
+            permissions:
+            - app.accountMgr
+            - app.accountMgr
+            technicalName: sbs.user
+          id: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+          type: Role
+        - attributes:
+            displayName: User
+            permissions:
+            - app.accountMgr
+            - app.accountMgr
+            technicalName: sbs.user
+          id: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+          type: Role
+        links:
+          next: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty"
+          self: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles
+    Role:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: Role
+        id:
+          type: string
+          example: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+        attributes:
+          $ref: '#/components/schemas/Role_attributes'
+      example:
+        attributes:
+          displayName: User
+          permissions:
+          - app.accountMgr
+          - app.accountMgr
+          technicalName: sbs.user
+        id: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+        type: Role
+    MachineUser:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - MachineUser
+        id:
+          type: string
+          description: 'ID of the Machine User '
+          example: 8e9833b5-b844-40a3-8572-4a16d29c53bc
+        attributes:
+          $ref: '#/components/schemas/MachineUserResponseAttributes'
+        relationships:
+          $ref: '#/components/schemas/MachineUser_relationships'
+        meta:
+          $ref: '#/components/schemas/MachineUser_meta'
+    MachineUserResponseAttributes:
+      required:
+      - name
+      - oAuth
+      - purpose
+      - state
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of Machine User
+          example: Machine User 1
+        purpose:
+          type: string
+          description: Purpose of this machine user
+          example: running automated tests
+        state:
+          $ref: '#/components/schemas/MachineUserState'
+        oAuth:
+          $ref: '#/components/schemas/MachineUserOAuth'
+    MachineUserState:
+      required:
+      - actionBy
+      - current
+      - since
+      type: object
+      properties:
+        current:
+          type: string
+          description: Status of Machine User
+          example: Active
+        since:
+          type: string
+          description: Status since time
+          example: 2021-11-06T00:00:00Z
+        actionBy:
+          type: string
+          description: was set to this status by(ID)
+          example: 8e9833b5-b844-40a3-8572-4a16d29c53bc
+    MachineUserOAuth:
+      required:
+      - audience
+      - clientId
+      - issuer
+      - secretCreated
+      - secretRotated
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: ID of client
+          example: iNpNMgBVJ0Xh5dLqwkC70OueFs7kRAF2
+        issuer:
+          type: string
+          description: issuer of oAuth
+          example: https://siemens-bt-015.eu.auth0.com
+        audience:
+          type: string
+          description: Audience
+          example: https://horizon.siemens.com
+        secretCreated:
+          type: string
+          description: Time of secret creation
+          example: 2021-06-29T08:58:43.962307719Z
+        secretRotated:
+          type: string
+          description: time of secret rotation
+          example: 2021-06-29T08:58:43.962307719Z
+    CustomerList:
+      required:
+      - data
+      - links
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/CustomerList_links'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+    PagedUserGroupListResponse:
+      title: PagedUserGroupListResponse
+      required:
+      - data
+      - links
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/UserGroupListResponseData'
+        links:
+          $ref: '#/components/schemas/PagedUserGroupListResponse_links'
+    UserGroupListResponseData:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserGroupResponseData'
+      x-schema-name: UserGroupListResponseData
+    UserGroupResponseData:
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: UserGroup
+        id:
+          type: string
+          example: f68a9762-9679-4c17-9012-ec9271f4087f
+        attributes:
+          $ref: '#/components/schemas/UserGroupResponseAttribute'
+        relationships:
+          $ref: '#/components/schemas/UserGroup_relationships'
+    UserGroupResponseAttribute:
+      required:
+      - description
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 'Name of the user group '
+          example: CustomerOperator
+        description:
+          type: string
+          description: 'Description of the user group '
+          example: Customer Operator for managing user groups
+        isMachineEnabled:
+          type: boolean
+          example: true
+        isSystemDefined:
+          type: boolean
+          example: true
+    Error:
+      required:
+      - errors
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error_errors'
+      additionalProperties: false
+      description: "[More error information](docs/api-errors.html)\n"
+    inline_response_200:
+      properties:
+        data:
+          $ref: '#/components/schemas/PartitionList'
+      example:
+        data:
+          data:
+          - relationships:
+              ownedByCustomer:
+                data:
+                  id: fee69bee-d108-4c30-9595-47d40b1e24ed
+                  type: Customer
+            attributes:
+              name: name
+              description: sample partition
+            id: uuid
+            type: Partition
+          - relationships:
+              ownedByCustomer:
+                data:
+                  id: fee69bee-d108-4c30-9595-47d40b1e24ed
+                  type: Customer
+            attributes:
+              name: name
+              description: sample partition
+            id: uuid
+            type: Partition
+          links:
+            next: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions?page[cursor]=qwerty"
+            self: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions
+          included:
+          - attributes:
+              name: name
+            id: 209d38aa-02c1-48ab-bf37-2716f1ddfeb6
+            type: Customer
+          - attributes:
+              name: name
+            id: 209d38aa-02c1-48ab-bf37-2716f1ddfeb6
+            type: Customer
+    Customer_attributes:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: test-customer-name
+        customerMembershipState:
+          $ref: '#/components/schemas/UserMembershipAttributes'
+    Customer_meta:
+      required:
+      - createdAt
+      type: object
+      properties:
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+          example: cde
+    RoleRelationship_data:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Role
+        id:
+          type: string
+          example: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+      example:
+        id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+        type: Role
+    CustomerRelationship_data:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Customer
+        id:
+          type: string
+          example: fee69bee-d108-4c30-9595-47d40b1e24ed
+      example:
+        id: fee69bee-d108-4c30-9595-47d40b1e24ed
+        type: Customer
+    PartitionRelationship_data:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: Partition
+          enum:
+          - Partition
+        id:
+          type: string
+          example: e0e662a9-c7a9-495a-a345-e06436d41941
+      example:
+        id: e0e662a9-c7a9-495a-a345-e06436d41941
+        type: Partition
+    UserGroup_attributes:
+      required:
+      - description
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 'Name of the user group '
+          example: CustomerOperator
+        description:
+          type: string
+          description: 'Description of the user group '
+          example: Customer Operator for managing user groups
+        isMachineEnabled:
+          type: boolean
+          example: true
+        isSystemDefined:
+          type: boolean
+          example: true
+      example:
+        isMachineEnabled: true
+        isSystemDefined: true
+        name: CustomerOperator
+        description: Customer Operator for managing user groups
+    UserGroup_relationships:
+      type: object
+      properties:
+        hasAccessTo:
+          $ref: '#/components/schemas/PartitionRelationship'
+        authorizedAs:
+          $ref: '#/components/schemas/RoleRelationship'
+        ownedBy:
+          $ref: '#/components/schemas/CustomerRelationship'
+      example:
+        authorizedAs:
+          data:
+          - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+            type: Role
+          - id: 38c5b37e-1143-4760-98b9-0bf15fdf2c6f
+            type: Role
+        hasAccessTo:
+          data:
+          - id: e0e662a9-c7a9-495a-a345-e06436d41941
+            type: Partition
+          - id: e0e662a9-c7a9-495a-a345-e06436d41941
+            type: Partition
+        ownedBy:
+          data:
+            id: fee69bee-d108-4c30-9595-47d40b1e24ed
+            type: Customer
+    UserGroupList_links:
+      required:
+      - self
+      type: object
+      properties:
+        self:
+          type: string
+          example: /me/usergroups
+        next:
+          type: string
+          example: "/me/usergroups?page[cursor]=qwerty"
+      example:
+        next: "/me/usergroups?page[cursor]=qwerty"
+        self: /me/usergroups
+    UserGroupRelationship_data:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: UserGroup
+        id:
+          type: string
+    UserResponseAttributes_identity:
+      required:
+      - emailId
+      - externalId
+      - givenName
+      type: object
+      properties:
+        emailId:
+          type: string
+          description: email address of the user
+          example: john.doe@siemens.com
+        externalId:
+          type: string
+          description: horizon ID of the user within Siemens ID
+          example: oauth2|main-tenant-oidc|samlp|Siemens|Z0000ABCD
+        familyName:
+          type: string
+          description: user's family name
+          example: Doe
+        fullName:
+          type: string
+          description: user's full name
+          example: John Doe
+        givenName:
+          type: string
+          description: user's given name
+          example: John
+      description: user identity details
+    UserResponseAttributes_profile:
+      type: object
+      properties:
+        freeText:
+          type: string
+          description: free text user info
+        jobDescription:
+          type: string
+          description: user's job description
+          example: Engineer
+        phone:
+          type: string
+          description: user's contact phone number
+          example: 222-333-5674
+        profileImage:
+          type: string
+          description: user's profile image
+    User_relationships:
+      type: object
+      properties:
+        belongsTo:
+          $ref: '#/components/schemas/UserGroupRelationship'
+    PartitionList_links:
+      required:
+      - self
+      type: object
+      properties:
+        self:
+          type: string
+          example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions
+        next:
+          type: string
+          example: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions?page[cursor]=qwerty"
+      example:
+        next: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions?page[cursor]=qwerty"
+        self: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/partitions
+    PartitionList_attributes:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+      example:
+        name: name
+    PartitionList_included:
+      required:
+      - attributes
+      - id
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: Customer
+        id:
+          type: string
+          description: ID
+          example: 209d38aa-02c1-48ab-bf37-2716f1ddfeb6
+        attributes:
+          $ref: '#/components/schemas/PartitionList_attributes'
+      example:
+        attributes:
+          name: name
+        id: 209d38aa-02c1-48ab-bf37-2716f1ddfeb6
+        type: Customer
+    Partition_attributes:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          example: sample partition
+      example:
+        name: name
+        description: sample partition
+    Partition_relationships:
+      required:
+      - ownedByCustomer
+      type: object
+      properties:
+        ownedByCustomer:
+          $ref: '#/components/schemas/CustomerRelationship'
+      example:
+        ownedByCustomer:
+          data:
+            id: fee69bee-d108-4c30-9595-47d40b1e24ed
+            type: Customer
+    RoleList_links:
+      required:
+      - self
+      type: object
+      properties:
+        self:
+          type: string
+          example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles
+        next:
+          type: string
+          example: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty"
+      example:
+        next: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty"
+        self: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles
+    Role_attributes:
+      required:
+      - displayName
+      - permissions
+      - technicalName
+      type: object
+      properties:
+        technicalName:
+          type: string
+          example: sbs.user
+        displayName:
+          type: string
+          example: User
+        permissions:
+          type: array
+          items:
+            type: string
+            example: app.accountMgr
+      example:
+        displayName: User
+        permissions:
+        - app.accountMgr
+        - app.accountMgr
+        technicalName: sbs.user
+    MachineUser_relationships:
+      type: object
+      properties:
+        ownedBy:
+          $ref: '#/components/schemas/CustomerRelationship'
+    MachineUser_meta:
+      required:
+      - createdAt
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          example: abc
+        updatedBy:
+          type: string
+          example: cde
+    CustomerList_links:
+      required:
+      - self
+      type: object
+      properties:
+        self:
+          type: string
+          example: /me/customers
+        next:
+          type: string
+          example: "/me/customers?page[cursor]=qwerty"
+    PagedUserGroupListResponse_links:
+      type: object
+      properties:
+        self:
+          type: string
+          example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/usergroups
+        next:
+          type: string
+          example: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/usergroups
+    Error_errors:
+      required:
+      - id
+      - status
+      - title
+      type: object
+      properties:
+        id:
+          pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          type: string
+          description: A unique identifier for this particular occurrence of the problem.
+          example: e31f00cc-7a5d-46c2-a272-771e6a8d6ff0
+        code:
+          type: string
+          description: "An application-specific error code, expressed as a string\
+            \ value."
+          example: 200-0201
+        status:
+          type: string
+          description: "The HTTP status code applicable to this problem, expressed\
+            \ as a string value."
+          example: "403"
+        title:
+          type: string
+          description: "A short, human-readable summary of the problem that SHOULD\
+            \ NOT change from occurrence to occurrence of the problem, except for\
+            \ purposes of localization."
+          example: Forbidden to perform this action
+        detail:
+          type: string
+          description: "a human-readable explanation specific to this occurrence of\
+            \ the problem. Like title, this field’s value can be localized."
+          example: Forbidden to perform this action
+  parameters:
+    pathPageCursor:
+      name: "page[cursor]"
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    pathPageAfter:
+      name: "page[after]"
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    pathCustomerId:
+      name: customerId
+      in: path
+      description: Customer ID
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    pathUserGroupId:
+      name: usrGrpId
+      in: path
+      description: Usergroup ID
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    pathUserId:
+      name: usrId
+      in: path
+      description: User ID
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    pathRolesId:
+      name: rId
+      in: path
+      description: Roles ID
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    queryPageAfter:
+      name: "page[after]"
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    queryPageBefore:
+      name: "page[before]"
+      in: query
+      description: Cursor to fetch previous paginated items
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    queryPageSize:
+      name: "page[size]"
+      in: query
+      description: Max number of items to return in a page
+      required: false
+      style: form
+      explode: true
+      schema:
+        maximum: 100
+        minimum: 1
+        type: integer
+        default: 20
+    queryPageNext:
+      name: "page[next]"
+      in: query
+      description: Cursor to fetch next paginated items
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+  securitySchemes:
+    service_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

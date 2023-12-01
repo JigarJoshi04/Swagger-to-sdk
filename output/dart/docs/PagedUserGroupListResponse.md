@@ -1,0 +1,15 @@
+# swagger.model.PagedUserGroupListResponse
+
+## Load the model package
+```dart
+import 'package:swagger/api.dart';
+```
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**data** | [**UserGroupListResponseData**](UserGroupListResponseData.md) |  | [default to null]
+**links** | [**PagedUserGroupListResponseLinks**](PagedUserGroupListResponseLinks.md) |  | [default to null]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

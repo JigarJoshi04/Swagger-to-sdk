@@ -1,0 +1,10 @@
+# CustomerAttributes
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**name** | **string** |  | 
+**customer_membership_state** | [**\Swagger\Client\Model\UserMembershipAttributes**](UserMembershipAttributes.md) |  | [optional] 
+
+[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+
