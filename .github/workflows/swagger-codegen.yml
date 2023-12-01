@@ -31,7 +31,7 @@ jobs:
         for lang in "${languages[@]}"
         do
           echo "Generating $lang SDK..."
-          java -jar swagger-codegen-cli.jar generate -i <path/to/your/swagger.yaml> -l $lang -o output/$lang
+          java -jar swagger-codegen-cli.jar generate -i input/accounts.openapi.yaml -l $lang -o output/$lang
         done
 
     - name: Commit and Push Changes
