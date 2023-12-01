@@ -26,12 +26,12 @@ jobs:
 
     - name: Generate SDKs
       run: |
-        languages=("python" "java" "javascript" "typescript" "ruby" "php" "csharp" "swift" "go" "kotlin" "scala" "typescript-node" "typescript-fetch" "typescript-angular" "objc" "rust")
+        languages=("python" "java" "javascript" "typescript-angular" "ruby" "php" "csharp" "swift" "go" "kotlin" "scala" "typescript-node" "typescript-fetch" "typescript-angular" "objc" "dart" "rust" "powershell")
         
         for lang in "${languages[@]}"
         do
           echo "Generating $lang SDK..."
-          java -jar swagger-codegen-cli.jar generate -i input/accounts.openapi.yaml -l $lang -o output/$lang
+          java -jar swagger-codegen-cli.jar generate -i  -l $lang -o output/$lang
         done
 
     - name: Commit and Push Changes
