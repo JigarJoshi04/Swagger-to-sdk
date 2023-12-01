@@ -25,7 +25,7 @@ import java.io.IOException;
  * user identity details
  */
 @Schema(description = "user identity details")
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-01T06:25:18.059872Z[Etc/UTC]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-01T06:30:31.697361Z[Etc/UTC]")
 public class UserResponseAttributesIdentity {
   @SerializedName("emailId")
   private String emailId = null;

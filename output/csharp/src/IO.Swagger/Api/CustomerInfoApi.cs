@@ -46,6 +46,31 @@ namespace IO.Swagger.Api
         /// <param name="include">include related resources (optional)</param>
         /// <returns>ApiResponse of InlineResponse200</returns>
         ApiResponse<InlineResponse200> GetPartitionsWithHttpInfo (string customerId, string include = null);
+        /// <summary>
+        /// List Roles for Customer
+        /// </summary>
+        /// <remarks>
+        /// Get the roles available for specified customer ID
+        /// </remarks>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>RoleList</returns>
+        RoleList GetRoles (string customerId, string pageCursor = null, int? pageSize = null);
+
+        /// <summary>
+        /// List Roles for Customer
+        /// </summary>
+        /// <remarks>
+        /// Get the roles available for specified customer ID
+        /// </remarks>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>ApiResponse of RoleList</returns>
+        ApiResponse<RoleList> GetRolesWithHttpInfo (string customerId, string pageCursor = null, int? pageSize = null);
         #endregion Synchronous Operations
         #region Asynchronous Operations
         /// <summary>
@@ -71,6 +96,31 @@ namespace IO.Swagger.Api
         /// <param name="include">include related resources (optional)</param>
         /// <returns>Task of ApiResponse (InlineResponse200)</returns>
         System.Threading.Tasks.Task<ApiResponse<InlineResponse200>> GetPartitionsAsyncWithHttpInfo (string customerId, string include = null);
+        /// <summary>
+        /// List Roles for Customer
+        /// </summary>
+        /// <remarks>
+        /// Get the roles available for specified customer ID
+        /// </remarks>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>Task of RoleList</returns>
+        System.Threading.Tasks.Task<RoleList> GetRolesAsync (string customerId, string pageCursor = null, int? pageSize = null);
+
+        /// <summary>
+        /// List Roles for Customer
+        /// </summary>
+        /// <remarks>
+        /// Get the roles available for specified customer ID
+        /// </remarks>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>Task of ApiResponse (RoleList)</returns>
+        System.Threading.Tasks.Task<ApiResponse<RoleList>> GetRolesAsyncWithHttpInfo (string customerId, string pageCursor = null, int? pageSize = null);
         #endregion Asynchronous Operations
     }
 
@@ -329,6 +379,161 @@ namespace IO.Swagger.Api
             return new ApiResponse<InlineResponse200>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
                 (InlineResponse200) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(InlineResponse200)));
+        }
+
+        /// <summary>
+        /// List Roles for Customer Get the roles available for specified customer ID
+        /// </summary>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>RoleList</returns>
+        public RoleList GetRoles (string customerId, string pageCursor = null, int? pageSize = null)
+        {
+             ApiResponse<RoleList> localVarResponse = GetRolesWithHttpInfo(customerId, pageCursor, pageSize);
+             return localVarResponse.Data;
+        }
+
+        /// <summary>
+        /// List Roles for Customer Get the roles available for specified customer ID
+        /// </summary>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>ApiResponse of RoleList</returns>
+        public ApiResponse< RoleList > GetRolesWithHttpInfo (string customerId, string pageCursor = null, int? pageSize = null)
+        {
+            // verify the required parameter 'customerId' is set
+            if (customerId == null)
+                throw new ApiException(400, "Missing required parameter 'customerId' when calling CustomerInfoApi->GetRoles");
+
+            var localVarPath = "/customers/{customerId}/roles";
+            var localVarPathParams = new Dictionary<String, String>();
+            var localVarQueryParams = new List<KeyValuePair<String, String>>();
+            var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<String, String>();
+            var localVarFileParams = new Dictionary<String, FileParameter>();
+            Object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            String[] localVarHttpContentTypes = new String[] {
+            };
+            String localVarHttpContentType = this.Configuration.ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            String[] localVarHttpHeaderAccepts = new String[] {
+                "application/vnd.api+json"
+            };
+            String localVarHttpHeaderAccept = this.Configuration.ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            if (customerId != null) localVarPathParams.Add("customerId", this.Configuration.ApiClient.ParameterToString(customerId)); // path parameter
+            if (pageCursor != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "page[cursor]", pageCursor)); // query parameter
+            if (pageSize != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "page[size]", pageSize)); // query parameter
+            // authentication (service_auth) required
+            // bearer required
+            if (!String.IsNullOrEmpty(this.Configuration.AccessToken))
+            {
+                localVarHeaderParams["Authorization"] = "Bearer " + this.Configuration.AccessToken;
+            }
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse) this.Configuration.ApiClient.CallApi(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int) localVarResponse.StatusCode;
+
+            if (ExceptionFactory != null)
+            {
+                Exception exception = ExceptionFactory("GetRoles", localVarResponse);
+                if (exception != null) throw exception;
+            }
+
+            return new ApiResponse<RoleList>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
+                (RoleList) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(RoleList)));
+        }
+
+        /// <summary>
+        /// List Roles for Customer Get the roles available for specified customer ID
+        /// </summary>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>Task of RoleList</returns>
+        public async System.Threading.Tasks.Task<RoleList> GetRolesAsync (string customerId, string pageCursor = null, int? pageSize = null)
+        {
+             ApiResponse<RoleList> localVarResponse = await GetRolesAsyncWithHttpInfo(customerId, pageCursor, pageSize);
+             return localVarResponse.Data;
+
+        }
+
+        /// <summary>
+        /// List Roles for Customer Get the roles available for specified customer ID
+        /// </summary>
+        /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="customerId">Customer ID</param>
+        /// <param name="pageCursor">Cursor to fetch next paginated items (optional)</param>
+        /// <param name="pageSize">Max number of items to return in a page (optional, default to 20)</param>
+        /// <returns>Task of ApiResponse (RoleList)</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<RoleList>> GetRolesAsyncWithHttpInfo (string customerId, string pageCursor = null, int? pageSize = null)
+        {
+            // verify the required parameter 'customerId' is set
+            if (customerId == null)
+                throw new ApiException(400, "Missing required parameter 'customerId' when calling CustomerInfoApi->GetRoles");
+
+            var localVarPath = "/customers/{customerId}/roles";
+            var localVarPathParams = new Dictionary<String, String>();
+            var localVarQueryParams = new List<KeyValuePair<String, String>>();
+            var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<String, String>();
+            var localVarFileParams = new Dictionary<String, FileParameter>();
+            Object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            String[] localVarHttpContentTypes = new String[] {
+            };
+            String localVarHttpContentType = this.Configuration.ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            String[] localVarHttpHeaderAccepts = new String[] {
+                "application/vnd.api+json"
+            };
+            String localVarHttpHeaderAccept = this.Configuration.ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            if (customerId != null) localVarPathParams.Add("customerId", this.Configuration.ApiClient.ParameterToString(customerId)); // path parameter
+            if (pageCursor != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "page[cursor]", pageCursor)); // query parameter
+            if (pageSize != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "page[size]", pageSize)); // query parameter
+            // authentication (service_auth) required
+            // bearer required
+            if (!String.IsNullOrEmpty(this.Configuration.AccessToken))
+            {
+                localVarHeaderParams["Authorization"] = "Bearer " + this.Configuration.AccessToken;
+            }
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse) await this.Configuration.ApiClient.CallApiAsync(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int) localVarResponse.StatusCode;
+
+            if (ExceptionFactory != null)
+            {
+                Exception exception = ExceptionFactory("GetRoles", localVarResponse);
+                if (exception != null) throw exception;
+            }
+
+            return new ApiResponse<RoleList>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
+                (RoleList) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(RoleList)));
         }
 
     }

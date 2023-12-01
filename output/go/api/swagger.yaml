@@ -116,6 +116,63 @@ paths:
       security:
       - service_auth: []
       x-horizon-permission: subscription.partitions.read
+  /customers/{customerId}/roles:
+    get:
+      tags:
+      - CustomerInfo
+      summary: List Roles for Customer
+      description: Get the roles available for specified customer ID
+      operationId: getRoles
+      parameters:
+      - name: "page[cursor]"
+        in: query
+        description: Cursor to fetch next paginated items
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: "page[size]"
+        in: query
+        description: Max number of items to return in a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 20
+      - name: customerId
+        in: path
+        description: Customer ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/RoleList'
+        "4XX":
+          description: Client Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "5XX":
+          description: Server Error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - service_auth: []
+      x-horizon-permission: user.role.read
 components:
   schemas:
     MetaCompany:
@@ -433,6 +490,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Role'
+      example:
+        data:
+        - attributes:
+            displayName: User
+            permissions:
+            - app.accountMgr
+            - app.accountMgr
+            technicalName: sbs.user
+          id: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+          type: Role
+        - attributes:
+            displayName: User
+            permissions:
+            - app.accountMgr
+            - app.accountMgr
+            technicalName: sbs.user
+          id: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+          type: Role
+        links:
+          next: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty"
+          self: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles
     Role:
       required:
       - id
@@ -447,6 +525,15 @@ components:
           example: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
         attributes:
           $ref: '#/components/schemas/Role_attributes'
+      example:
+        attributes:
+          displayName: User
+          permissions:
+          - app.accountMgr
+          - app.accountMgr
+          technicalName: sbs.user
+        id: c4332efa-1bc8-4d3c-bf39-e3df93d749e4
+        type: Role
     MachineUser:
       required:
       - id
@@ -926,6 +1013,9 @@ components:
         next:
           type: string
           example: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty"
+      example:
+        next: "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty"
+        self: /customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles
     Role_attributes:
       required:
       - displayName
@@ -944,6 +1034,12 @@ components:
           items:
             type: string
             example: app.accountMgr
+      example:
+        displayName: User
+        permissions:
+        - app.accountMgr
+        - app.accountMgr
+        technicalName: sbs.user
     MachineUser_relationships:
       type: object
       properties:

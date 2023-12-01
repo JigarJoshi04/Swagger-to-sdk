@@ -74,6 +74,24 @@ end
 SwaggerClient.configure do |config|
 end
 
+api_instance = SwaggerClient::CustomerInfoApi.new
+customer_id = 'customer_id_example' # String | Customer ID
+opts = { 
+  page_cursor: 'page_cursor_example', # String | Cursor to fetch next paginated items
+  page_size: 20 # Integer | Max number of items to return in a page
+}
+
+begin
+  #List Roles for Customer
+  result = api_instance.get_roles(customer_id, opts)
+  p result
+rescue SwaggerClient::ApiError => e
+  puts "Exception when calling CustomerInfoApi->get_roles: #{e}"
+end
+# Setup authorization
+SwaggerClient.configure do |config|
+end
+
 api_instance = SwaggerClient::MeApi.new
 opts = { 
   page_cursor: 'page_cursor_example', # String | Cursor to fetch next paginated items
@@ -96,6 +114,7 @@ All URIs are relative to *https://api.bpcloud.siemens.com/accounts*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SwaggerClient::CustomerInfoApi* | [**get_partitions**](docs/CustomerInfoApi.md#get_partitions) | **GET** /customers/{customerId}/partitions | List Partitions for Customer
+*SwaggerClient::CustomerInfoApi* | [**get_roles**](docs/CustomerInfoApi.md#get_roles) | **GET** /customers/{customerId}/roles | List Roles for Customer
 *SwaggerClient::MeApi* | [**get_me_usergroups**](docs/MeApi.md#get_me_usergroups) | **GET** /me/usergroups | Get the usergroups of caller
 
 ## Documentation for Models

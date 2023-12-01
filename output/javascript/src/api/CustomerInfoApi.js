@@ -15,6 +15,7 @@
 import {ApiClient} from "../ApiClient";
 import {Error} from '../model/Error';
 import {InlineResponse200} from '../model/InlineResponse200';
+import {RoleList} from '../model/RoleList';
 
 /**
 * CustomerInfo service.
@@ -80,6 +81,56 @@ export class CustomerInfoApi {
 
       return this.apiClient.callApi(
         '/customers/{customerId}/partitions', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, callback
+      );
+    }
+    /**
+     * Callback function to receive the result of the getRoles operation.
+     * @callback moduleapi/CustomerInfoApi~getRolesCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/RoleList{ data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * List Roles for Customer
+     * Get the roles available for specified customer ID
+     * @param {String} customerId Customer ID
+     * @param {Object} opts Optional parameters
+     * @param {String} opts.pageCursor Cursor to fetch next paginated items
+     * @param {Number} opts.pageSize Max number of items to return in a page (default to <.>)
+     * @param {module:api/CustomerInfoApi~getRolesCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link <&vendorExtensions.x-jsdoc-type>}
+     */
+    getRoles(customerId, opts, callback) {
+      opts = opts || {};
+      let postBody = null;
+      // verify the required parameter 'customerId' is set
+      if (customerId === undefined || customerId === null) {
+        throw new Error("Missing the required parameter 'customerId' when calling getRoles");
+      }
+
+      let pathParams = {
+        'customerId': customerId
+      };
+      let queryParams = {
+        'page[cursor]': opts['pageCursor'],'page[size]': opts['pageSize']
+      };
+      let headerParams = {
+        
+      };
+      let formParams = {
+        
+      };
+
+      let authNames = ['service_auth'];
+      let contentTypes = [];
+      let accepts = ['application/vnd.api+json'];
+      let returnType = RoleList;
+
+      return this.apiClient.callApi(
+        '/customers/{customerId}/roles', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );

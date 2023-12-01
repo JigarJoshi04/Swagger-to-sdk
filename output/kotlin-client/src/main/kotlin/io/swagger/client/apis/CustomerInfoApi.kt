@@ -13,6 +13,7 @@ package io.swagger.client.apis
 
 import io.swagger.client.models.Error
 import io.swagger.client.models.InlineResponse200
+import io.swagger.client.models.RoleList
 
 import io.swagger.client.infrastructure.*
 
@@ -38,6 +39,33 @@ class CustomerInfoApi(basePath: kotlin.String = "https://api.bpcloud.siemens.com
 
         return when (response.responseType) {
             ResponseType.Success -> (response as Success<*>).data as InlineResponse200
+            ResponseType.Informational -> TODO()
+            ResponseType.Redirection -> TODO()
+            ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
+            ResponseType.ServerError -> throw ServerException((response as ServerError<*>).message ?: "Server error")
+        }
+    }
+    /**
+     * List Roles for Customer
+     * Get the roles available for specified customer ID
+     * @param customerId Customer ID 
+     * @param page[cursor] Cursor to fetch next paginated items (optional)
+     * @param page[size] Max number of items to return in a page (optional, default to 20)
+     * @return RoleList
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun getRoles(customerId: kotlin.String, page[cursor]: kotlin.String? = null, page[size]: kotlin.Int? = null): RoleList {
+        val localVariableQuery: MultiValueMap = mapOf("page[cursor]" to listOf("$page[cursor]"), "page[size]" to listOf("$page[size]"))
+        val localVariableConfig = RequestConfig(
+                RequestMethod.GET,
+                "/customers/{customerId}/roles".replace("{" + "customerId" + "}", "$customerId"), query = localVariableQuery
+        )
+        val response = request<RoleList>(
+                localVariableConfig
+        )
+
+        return when (response.responseType) {
+            ResponseType.Success -> (response as Success<*>).data as RoleList
             ResponseType.Informational -> TODO()
             ResponseType.Redirection -> TODO()
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")

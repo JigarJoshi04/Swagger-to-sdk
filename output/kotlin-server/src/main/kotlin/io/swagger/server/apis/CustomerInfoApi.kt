@@ -35,6 +35,7 @@ import io.swagger.server.infrastructure.ApiPrincipal
 
 import io.swagger.server.models.Error
 import io.swagger.server.models.InlineResponse200
+import io.swagger.server.models.RoleList
 
 @KtorExperimentalLocationsAPI
 fun Route.CustomerInfoApi() {
@@ -95,6 +96,41 @@ fun Route.CustomerInfoApi() {
       "id" : "209d38aa-02c1-48ab-bf37-2716f1ddfeb6",
       "type" : "Customer"
     } ]
+  }
+}"""
+            
+            when(exampleContentType) {
+                "application/json" -> call.respond(gson.fromJson(exampleContentString, empty::class.java))
+                "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
+                else -> call.respondText(exampleContentString)
+            }        }
+    }
+    get<Paths.getRoles> {  _: Paths.getRoles ->
+        if (principal == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+        } else {
+            val exampleContentType = "application/json"
+            val exampleContentString = """{
+  "data" : [ {
+    "attributes" : {
+      "displayName" : "User",
+      "permissions" : [ "app.accountMgr", "app.accountMgr" ],
+      "technicalName" : "sbs.user"
+    },
+    "id" : "c4332efa-1bc8-4d3c-bf39-e3df93d749e4",
+    "type" : "Role"
+  }, {
+    "attributes" : {
+      "displayName" : "User",
+      "permissions" : [ "app.accountMgr", "app.accountMgr" ],
+      "technicalName" : "sbs.user"
+    },
+    "id" : "c4332efa-1bc8-4d3c-bf39-e3df93d749e4",
+    "type" : "Role"
+  } ],
+  "links" : {
+    "next" : "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles?page[cursor]=qwerty",
+    "self" : "/customers/8e9833b5-b844-40a3-8572-4a16d29c53bc/roles"
   }
 }"""
             

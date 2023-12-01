@@ -19,6 +19,9 @@
 #'
 #' get_partitions List Partitions for Customer
 #'
+#'
+#' get_roles List Roles for Customer
+#'
 #' }
 #'
 #' @export
@@ -58,6 +61,42 @@ CustomerInfoApi <- R6::R6Class(
       
       if (httr::status_code(resp) >= 200 && httr::status_code(resp) <= 299) {
         returnObject <- InlineResponse200$new()
+        result <- returnObject$fromJSON(httr::content(resp, "text", encoding = "UTF-8"))
+        Response$new(returnObject, resp)
+      } else if (httr::status_code(resp) >= 400 && httr::status_code(resp) <= 499) {
+        Response$new("API client error", resp)
+      } else if (httr::status_code(resp) >= 500 && httr::status_code(resp) <= 599) {
+        Response$new("API server error", resp)
+      }
+
+    }
+    get_roles = function(customer_id, page_cursor, page_size, ...){
+      args <- list(...)
+      queryParams <- list()
+      headerParams <- character()
+
+      if (!missing(`page_cursor`)) {
+        queryParams['page[cursor]'] <- page_cursor
+      }
+
+      if (!missing(`page_size`)) {
+        queryParams['page[size]'] <- page_size
+      }
+
+      urlPath <- "/customers/{customerId}/roles"
+      if (!missing(`customer_id`)) {
+        urlPath <- gsub(paste0("\\{", "customerId", "\\}"), `customer_id`, urlPath)
+      }
+
+      resp <- self$apiClient$callApi(url = paste0(self$apiClient$basePath, urlPath),
+                                 method = "GET",
+                                 queryParams = queryParams,
+                                 headerParams = headerParams,
+                                 body = body,
+                                 ...)
+      
+      if (httr::status_code(resp) >= 200 && httr::status_code(resp) <= 299) {
+        returnObject <- RoleList$new()
         result <- returnObject$fromJSON(httr::content(resp, "text", encoding = "UTF-8"))
         Response$new(returnObject, resp)
       } else if (httr::status_code(resp) >= 400 && httr::status_code(resp) <= 499) {

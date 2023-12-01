@@ -29,7 +29,7 @@ import java.util.List;
  * UserGroupList
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-01T06:25:18.059872Z[Etc/UTC]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-01T06:30:31.697361Z[Etc/UTC]")
 public class UserGroupList {
   @SerializedName("links")
   private UserGroupListLinks links = null;

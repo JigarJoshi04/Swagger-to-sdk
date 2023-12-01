@@ -14,6 +14,7 @@ package io.swagger.client.api
 import java.text.SimpleDateFormat
 
 import io.swagger.client.model.Error
+import io.swagger.client.model.RoleList
 import io.swagger.client.model.inline_response_200
 import io.swagger.client.{ApiInvoker, ApiException}
 
@@ -107,6 +108,36 @@ class CustomerInfoApi(
       helper.getPartitions(customerId, include)
   }
 
+  /**
+   * List Roles for Customer
+   * Get the roles available for specified customer ID
+   *
+   * @param customerId Customer ID 
+   * @param pageCursor Cursor to fetch next paginated items (optional)
+   * @param pageSize Max number of items to return in a page (optional, default to 20)
+   * @return RoleList
+   */
+  def getRoles(customerId: String, pageCursor: Option[String] = None, pageSize: Option[Integer] = Option(20)): Option[RoleList] = {
+    val await = Try(Await.result(getRolesAsync(customerId, pageCursor, pageSize), Duration.Inf))
+    await match {
+      case Success(i) => Some(await.get)
+      case Failure(t) => None
+    }
+  }
+
+  /**
+   * List Roles for Customer asynchronously
+   * Get the roles available for specified customer ID
+   *
+   * @param customerId Customer ID 
+   * @param pageCursor Cursor to fetch next paginated items (optional)
+   * @param pageSize Max number of items to return in a page (optional, default to 20)
+   * @return Future(RoleList)
+   */
+  def getRolesAsync(customerId: String, pageCursor: Option[String] = None, pageSize: Option[Integer] = Option(20)): Future[RoleList] = {
+      helper.getRoles(customerId, pageCursor, pageSize)
+  }
+
 }
 
 class CustomerInfoApiAsyncHelper(client: TransportClient, config: SwaggerConfig) extends ApiClient(client, config) {
@@ -126,6 +157,35 @@ class CustomerInfoApiAsyncHelper(client: TransportClient, config: SwaggerConfig)
 
     include match {
       case Some(param) => queryParams += "include" -> param.toString
+      case _ => queryParams
+    }
+
+    val resFuture = client.submit("GET", path, queryParams.toMap, headerParams.toMap, "")
+    resFuture flatMap { resp =>
+      process(reader.read(resp))
+    }
+  }
+
+  def getRoles(customerId: String,
+    pageCursor: Option[String] = None,
+    pageSize: Option[Integer] = Option(20)
+    )(implicit reader: ClientResponseReader[RoleList]): Future[RoleList] = {
+    // create path and map variables
+    val path = (addFmt("/customers/{customerId}/roles")
+      replaceAll("\\{" + "customerId" + "\\}", customerId.toString))
+
+    // query params
+    val queryParams = new mutable.HashMap[String, String]
+    val headerParams = new mutable.HashMap[String, String]
+
+    if (customerId == null) throw new Exception("Missing required parameter 'customerId' when calling CustomerInfoApi->getRoles")
+
+    pageCursor match {
+      case Some(param) => queryParams += "page[cursor]" -> param.toString
+      case _ => queryParams
+    }
+    pageSize match {
+      case Some(param) => queryParams += "page[size]" -> param.toString
       case _ => queryParams
     }
 

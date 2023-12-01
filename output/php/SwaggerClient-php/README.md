@@ -72,6 +72,24 @@ try {
 } catch (Exception $e) {
     echo 'Exception when calling CustomerInfoApi->getPartitions: ', $e->getMessage(), PHP_EOL;
 }
+
+
+$apiInstance = new Swagger\Client\Api\CustomerInfoApi(
+    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
+    // This is optional, `GuzzleHttp\Client` will be used as default.
+    new GuzzleHttp\Client(),
+    $config
+);
+$customer_id = "customer_id_example"; // string | Customer ID
+$page_cursor = "page_cursor_example"; // string | Cursor to fetch next paginated items
+$page_size = 20; // int | Max number of items to return in a page
+
+try {
+    $result = $apiInstance->getRoles($customer_id, $page_cursor, $page_size);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling CustomerInfoApi->getRoles: ', $e->getMessage(), PHP_EOL;
+}
 ?>
 ```
 
@@ -82,6 +100,7 @@ All URIs are relative to *https://api.bpcloud.siemens.com/accounts*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *CustomerInfoApi* | [**getPartitions**](docs/Api/CustomerInfoApi.md#getpartitions) | **GET** /customers/{customerId}/partitions | List Partitions for Customer
+*CustomerInfoApi* | [**getRoles**](docs/Api/CustomerInfoApi.md#getroles) | **GET** /customers/{customerId}/roles | List Roles for Customer
 *MeApi* | [**getMeUsergroups**](docs/Api/MeApi.md#getmeusergroups) | **GET** /me/usergroups | Get the usergroups of caller
 
 ## Documentation For Models

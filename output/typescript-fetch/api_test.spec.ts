@@ -26,6 +26,12 @@ describe("CustomerInfoApi", () => {
     const include: string = undefined
     return expect(instance.getPartitions(customerId, include, {})).resolves.toBe(null)
   })
+  test("getRoles", () => {
+    const customerId: string = "customerId_example"
+    const pageCursor: string = "pageCursor_example"
+    const pageSize: number = 56
+    return expect(instance.getRoles(customerId, pageCursor, pageSize, {})).resolves.toBe(null)
+  })
 })
 
 describe("MeApi", () => {
