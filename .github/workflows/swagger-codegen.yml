@@ -3,7 +3,7 @@ name: Swagger Codegen
 on:
   push:
     branches:
-      - main  # Adjust the branch name as needed
+      - main
 
 jobs:
   build:
@@ -31,16 +31,16 @@ jobs:
         for lang in "${languages[@]}"
         do
           echo "Generating $lang SDK..."
-          java -jar swagger-codegen-cli.jar generate -i  -l $lang -o output/$lang
+          java -jar swagger-codegen-cli.jar generate -i <path/to/your/swagger.yaml> -l $lang -o output/$lang
         done
 
     - name: Commit and Push Changes
       run: |
-        echo {{ env.GH_TOKEN }}
+        echo ${{ secrets.GH_TOKEN }}
         git config --local user.email "jigar.pj@somaiya.edu"
         git config --local user.name "Jigar Joshi"
         git add .
         git commit -m "Generate SDKs"
         git push
       env:
-        GH_TOKEN: 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
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
