@@ -36,11 +36,11 @@ jobs:
 
     - name: Commit and Push Changes
       run: |
-        echo {{ secrets.GH_TOKEN }}
+        echo {{ env.GH_TOKEN }}
         git config --local user.email "jigar.pj@somaiya.edu"
         git config --local user.name "Jigar Joshi"
         git add .
         git commit -m "Generate SDKs"
         git push
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: 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
